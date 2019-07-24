@@ -8,11 +8,16 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class AddrMatch {
+/**
+ * @Desc:地址匹配度算法
+ * @Author: WenRj
+ * @Date: 2019/7/24
+ */
 
+public class AddrMatch {
     private final static List<String> SPLIT_LIST =
             Arrays.asList("省","市","县","镇","街道","村","自然村","小区","社区","区","里","弄","塘","乡");
-    private final static double DECAY_VALUE = 0.3;
+    private final static double DECAY_VALUE = 0.3; //衰减值
 
     public static void main(String[] args) {
         String addr = "浙江省长兴县雉城街道申兴小区8-2-202至";
@@ -22,6 +27,13 @@ public class AddrMatch {
         System.out.println(resultMap.get("matchWords"));
     }
 
+    /**
+     * @Desc:字符串拼音
+     * @Author: WenRj
+     * @param:
+     * @return:
+     * @Date: 2019/7/24
+     */
     public static String characterToPinyin(char hanyu) {
         HanyuPinyinOutputFormat format = new HanyuPinyinOutputFormat();
         format.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
@@ -34,6 +46,13 @@ public class AddrMatch {
         return pinyinArray[0].substring(0, pinyinArray[0].length() - 1);
     }
 
+    /**
+     * @Desc:将字符串转为拼音
+     * @Author: WenRj
+     * @param:
+     * @return:
+     * @Date: 2019/7/24
+     */
     public static String strToPinyin(String hanyu) {
         StringBuilder sb = new StringBuilder();
         String tempPinyin = null;
@@ -50,6 +69,13 @@ public class AddrMatch {
         return sb.toString();
     }
 
+    /**
+     * @Desc: 去重
+     * @Author: WenRj
+     * @param:
+     * @return:
+     * @Date: 2019/7/24
+     */
     public static ArrayList<String> removeDuplicate(ArrayList<String> arrayList) {
         ArrayList<String> list = new ArrayList<String>();
         for (int i = 0; i < arrayList.size(); ++i){
@@ -61,6 +87,13 @@ public class AddrMatch {
 
     }
 
+    /**
+     * @Desc: 正则匹配，去掉非汉字的字符，‘群’
+     * @Author: WenRj
+     * @param:
+     * @return:
+     * @Date: 2019/7/24
+     */
     public static boolean isHaveHanzi(String str) {
         String reg = "[a-zA-Z0-9群]+";
         Pattern pat = Pattern.compile(reg);
@@ -69,6 +102,13 @@ public class AddrMatch {
     }
 
 
+    /**
+     * @Desc:将汉字字符串转为拼音
+     * @Author: WenRj
+     * @param:
+     * @return:
+     * @Date: 2019/7/24
+     */
     public static List<String> splitToPinyin(String str) {
         List<String> addrlist = new ArrayList<String>();
         Pattern p = Pattern.compile("[" + SPLIT_LIST +"]");
@@ -95,6 +135,13 @@ public class AddrMatch {
         return addrlist;
     }
 
+    /**
+     * @Desc: 地址相识度计算
+     * @Author: WenRj
+     * @param: addr:
+     * @return: matchWords:匹配值; matchValue :匹配度;
+     * @Date: 2019/7/24
+     */
     public static Map<String, Object> addrSimilarity(String addr, String group) {
         addr = addr.trim();
         group = group.trim();
@@ -108,6 +155,7 @@ public class AddrMatch {
         int mul_index = 0;
         Map<String, Object> resultMap = new HashMap<String, Object>();
         List<String> matchList = new ArrayList<String>();
+        //匹配度算法
         for (int i = grouplist.size() - 1; i >= 0; --i){
             String cell = grouplist.get(i);
             total_sum += Math.pow(DECAY_VALUE, mul_index);
